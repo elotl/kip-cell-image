@@ -23,7 +23,7 @@
       },
       "instance_type": "t3.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "Kip cell {{user `version`}}"
+      "ami_name": "elotl-kip-cell-{{user `version`}}"
     }
   ],
   "provisioners": [
