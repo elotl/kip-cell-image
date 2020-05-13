@@ -35,9 +35,8 @@
       "type": "shell",
       "inline": [
           "sudo apt-get update -y",
-          "#sudo apt-get install -y bash curl iptables ipset iproute2",
-          "#sudo dpkg -i /home/ubuntu/kip-cell_*.deb",
-          "sudo apt-get install -y /home/ubuntu/kip-cell_*.deb"
+          "sudo apt-get dist-upgrade -y",
+          "sudo apt-get install -y /home/ubuntu/{{user `package`}}"
       ]
     }
   ]
