@@ -38,7 +38,7 @@ jobs:
       uses: operatehappy/packer-github-actions@v0.2.0
       with:
         command: build
-        arguments: -package=${{ steps.get_package_name.outputs.pkgname }}
+        arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
         target: packer.json
 
     - name: Create release
