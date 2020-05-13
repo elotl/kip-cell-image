@@ -37,7 +37,7 @@
       "inline": [
           "sudo apt-get update -y",
           "sudo apt-get dist-upgrade -y",
-          "sudo apt-get install -y /home/ubuntu/{{user `package`}}",
+          "sudo dpkg -i /home/ubuntu/{{user `package`}} || sudo apt-get install -f -y",
           "rm -rf /home/ubuntu/.ssh"
       ]
     }
