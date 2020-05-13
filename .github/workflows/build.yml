@@ -4,21 +4,48 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v2
       with:
         fetch-depth: '0'
-    - run: git fetch origin +refs/tags/*:refs/tags/*
+
+    - name: Fetch tags
+      run: git fetch origin +refs/tags/*:refs/tags/*
+
     - name: Set VERSION
       if: startsWith(github.event.ref, 'refs/tags/v')
       run: echo ::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}
+
     - name: Build package
       run: |
         sudo apt-get update -y && sudo apt-get install debhelper devscripts curl
         ./build.sh
+
     - name: Set package name
       id: get_package_name
       run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
+
+    - name: Fix template
+      uses: operatehappy/packer-github-actions@master
+      with:
+        command: fix
+
+    - name: Validate template
+      uses: operatehappy/packer-github-actions@master
+      with:
+        command: validate
+        arguments: -syntax-only
+        target: packer.json
+
+    - name: Build image
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      uses: operatehappy/packer-github-action
+      with:
+        command: build
+        arguments: -package=${{ steps.get_package_name.outputs.pkgname }}
+        target: packer.json
+
     - name: Create release
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: create_release
@@ -30,6 +57,7 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
+
     - name: Upload release asset
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: upload-release-asset 
