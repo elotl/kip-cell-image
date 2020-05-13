@@ -1,0 +1,26 @@
+Source: kip-cell
+Section: net
+Priority: optional
+Maintainer: Elotl Maintainers <info@elotl.co>
+Build-Depends:
+ debhelper (>= 11),
+ bash,
+ curl
+Standards-Version: 4.1.3
+Homepage: https://github.com/elotl/kip
+#Vcs-Browser: https://salsa.debian.org/debian/kip-cell
+#Vcs-Git: https://salsa.debian.org/debian/kip-cell.git
+
+Package: kip-cell
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ iptables,
+ ipset,
+ iproute2,
+ nfs-common,
+ ssl-cert
+Description: Kip cell agent
+ This package provides an installer for the Kip cell agent Itzo
+ https://github.com/elotl/itzo.

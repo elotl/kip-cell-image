@@ -1,0 +1,10 @@
+[Unit]
+Description=Itzo launcher
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/itzo-launcher
+
+[Install]
+WantedBy=multi-user.target
