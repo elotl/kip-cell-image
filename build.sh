@@ -3,6 +3,9 @@
 set -euo pipefail
 
 VERSION="${VERSION:-}"
+if [[ $VERSION =~ ^v[0-9].* ]]; then
+    VERSION=""${VERSION#v}""
+fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PKG_DIR=$SCRIPT_DIR/kip-cell
