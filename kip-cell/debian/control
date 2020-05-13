@@ -3,7 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Elotl Maintainers <info@elotl.co>
 Build-Depends:
- debhelper (>= 11),
+ debhelper,
  bash,
  curl
 Standards-Version: 4.1.3
