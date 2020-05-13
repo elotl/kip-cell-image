@@ -16,7 +16,9 @@ jobs:
       id: get_package_name
       run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
     - name: Build package
-      run: ./build.sh
+      run: |
+        sudo apt-get update -y && sudo apt-get install debhelper devscripts curl
+        ./build.sh
     - name: Create release
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: create_release
