@@ -1,0 +1,41 @@
+on: [push, pull_request]
+name: Build package
+jobs:
+  build:
+    runs-on: ubuntu-xenial
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - run: git fetch origin +refs/tags/*:refs/tags/*
+    - name: Set VERSION
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      run: echo ::set-env name=VERSION::${{ github.ref }}
+    - name: Set package name
+      id: get_package_name
+      run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
+    - name: Build package
+      run: cd kip-cell && ./build.sh
+    - name: Create release
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload release asset
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./${{ steps.get_package_name.outputs.pkgname }}
+        asset_name: ${{ steps.get_package_name.outputs.pkgname }}
+        asset_content_type: application/octet-stream
