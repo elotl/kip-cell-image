@@ -16,7 +16,7 @@ jobs:
       id: get_package_name
       run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
     - name: Build package
-      run: cd kip-cell && ./build.sh
+      run: ./build.sh
     - name: Create release
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: create_release
