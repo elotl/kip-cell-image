@@ -26,13 +26,8 @@ jobs:
       id: get_package_name
       run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
 
-    - name: Fix template
-      uses: operatehappy/packer-github-actions@master
-      with:
-        command: fix
-
     - name: Validate template
-      uses: operatehappy/packer-github-actions@master
+      uses: operatehappy/packer-github-actions@v0.2.0
       with:
         command: validate
         arguments: -syntax-only
@@ -40,7 +35,7 @@ jobs:
 
     - name: Build image
       if: startsWith(github.event.ref, 'refs/tags/v')
-      uses: operatehappy/packer-github-action
+      uses: operatehappy/packer-github-actions@v0.2.0
       with:
         command: build
         arguments: -package=${{ steps.get_package_name.outputs.pkgname }}
