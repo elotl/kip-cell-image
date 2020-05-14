@@ -24,6 +24,14 @@
       "instance_type": "t3.micro",
       "ssh_username": "ubuntu",
       "ami_name": "elotl-kipdev-{{user `version`}}"
+    },
+  {
+      "type": "googlecompute",
+      "account_file": "account.json",
+      "project_id": "excellent-ion-277200",
+      "source_image": "ubuntu-1604-xenial-v20200429",
+      "ssh_username": "packer",
+      "zone": "us-central1-a"
     }
   ],
   "provisioners": [
