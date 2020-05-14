@@ -36,6 +36,12 @@
   ],
   "provisioners": [
     {
+      "type": "shell",
+      "inline": [
+        "while ! grep \"Cloud-init .* finished\" /var/log/cloud-init.log; do echo \"$(date -Ins) Waiting for cloud-init to finish\"; sleep 2; done"
+      ]
+    },
+    {
       "type": "file",
       "source": "{{user `package`}}",
       "destination": "/home/ubuntu/"
