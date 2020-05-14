@@ -41,6 +41,7 @@
           "sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert",
           "sudo dpkg -i /home/ubuntu/{{user `package`}}",
           "itzo --version",
+          "rm -rf /root/.ssh",
           "rm -rf /home/ubuntu/.ssh"
       ]
     }
