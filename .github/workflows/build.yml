@@ -34,7 +34,7 @@ jobs:
         target: packer.json
 
     - name: Save GCP account.json
-      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" > account.json
+      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" | base64 -d > account.json
 
     - name: Build image
       if: startsWith(github.event.ref, 'refs/tags/v')
