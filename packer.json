@@ -56,7 +56,7 @@
           "sudo dpkg -i /tmp/{{user `package`}}",
           "itzo --version",
           "sudo rm -rf /root/.ssh",
-          "rm -rf /home/ubuntu/.ssh"
+          "sudo rm -rf /home/ubuntu/.ssh"
       ]
     }
   ]
