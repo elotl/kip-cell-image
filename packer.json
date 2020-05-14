@@ -29,9 +29,10 @@
       "type": "googlecompute",
       "account_file": "account.json",
       "project_id": "excellent-ion-277200",
-      "source_image": "ubuntu-1604-xenial-v20200429",
+      "source_image_family": "ubuntu-1604-lts",
       "ssh_username": "packer",
-      "zone": "us-central1-a"
+      "zone": "us-west1-a",
+      "image_name": "elotl-kipdev-{{user `version`}}"
     }
   ],
   "provisioners": [
@@ -56,6 +57,7 @@
           "sudo dpkg -i /tmp/{{user `package`}}",
           "itzo --version",
           "sudo rm -rf /root/.ssh",
+          "sudo rm -rf /home/packer/.ssh",
           "sudo rm -rf /home/ubuntu/.ssh"
       ]
     }
