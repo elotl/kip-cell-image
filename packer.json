@@ -39,7 +39,7 @@
           "set -e -x",
           "sudo apt-get update -y",
           "sudo apt-get dist-upgrade -y",
-          "sudo apt-get install -y iproute2 ipsec iptables nfs-common ssl-cert",
+          "sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert",
           "sudo dpkg -i /home/ubuntu/{{user `package`}} || sudo apt-get install -y -f",
           "rm -rf /home/ubuntu/.ssh"
       ]
