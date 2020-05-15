@@ -28,7 +28,7 @@
   {
       "type": "googlecompute",
       "account_file": "account.json",
-      "project_id": "excellent-ion-277200",
+      "project_id": "elotl-kip",
       "source_image_family": "ubuntu-1604-lts",
       "ssh_username": "packer",
       "zone": "us-west1-a",
