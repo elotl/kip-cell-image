@@ -56,10 +56,11 @@
           "sudo apt-get update -y",
           "sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert",
           "sudo dpkg -i /tmp/{{user `package`}}",
-          "itzo --version",
+          "[ -f /etc/default/instance_configs.cfg ] && sudo sed -i 's/^ip_aliases.*$/ip_aliases = false/g' /etc/default/instance_configs.cfg || true",
           "sudo rm -rf /root/.ssh",
           "sudo rm -rf /home/packer/.ssh",
-          "sudo rm -rf /home/ubuntu/.ssh"
+          "sudo rm -rf /home/ubuntu/.ssh",
+          "itzo --version"
       ]
     }
   ]
