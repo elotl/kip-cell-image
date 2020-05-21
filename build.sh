@@ -11,7 +11,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PKG_DIR=$SCRIPT_DIR/kip-cell
 cd $PKG_DIR
 
-ITZO_LAUNCHER_VERSION="v0.0.6"
+ITZO_LAUNCHER_VERSION="v0.0.7"
 curl -fsL https://github.com/elotl/itzo-launcher/releases/download/$ITZO_LAUNCHER_VERSION/itzo-launcher-amd64 > itzo-launcher && chmod 755 itzo-launcher
 
 TOSI_VERSION="v0.0.3"
