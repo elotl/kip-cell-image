@@ -1,4 +1,13 @@
 on: [push, pull_request]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  GCE_ZONE: us-west1-a
+  GCE_PROJECT_ID: elotl-kip
+
 name: Build package
 jobs:
   build:
@@ -17,9 +26,21 @@ jobs:
       if: startsWith(github.event.ref, 'refs/tags/v')
       run: echo ::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}
 
+    - name: Save GCE account.json
+      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" | base64 -d > account.json
+
+    - name: Set GCE_SA_KEY
+      run: echo ::set-env name=GCE_SA_KEY::$(jq '.private_key' < account.json)
+
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '290.0.1'
+        service_account_key: ${GCE_SA_KEY}
+        project_id: ${GCE_PROJECT_ID}
+
     - name: Build package
       run: |
-        sudo apt-get update -y && sudo apt-get install debhelper devscripts curl
+        sudo apt-get update -y && sudo apt-get install debhelper devscripts curl jq
         ./build.sh
 
     - name: Set package name
@@ -33,26 +54,19 @@ jobs:
         arguments: -syntax-only
         target: packer.json
 
-    - name: Save GCP account.json
-      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" | base64 -d > account.json
-
     - name: Build image
       if: startsWith(github.event.ref, 'refs/tags/v')
       uses: operatehappy/packer-github-actions@v0.2.0
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       with:
         command: build
         arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
         target: packer.json
 
+
     - name: Create release
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: create_release
       uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
@@ -63,8 +77,6 @@ jobs:
       if: startsWith(github.event.ref, 'refs/tags/v')
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./${{ steps.get_package_name.outputs.pkgname }}

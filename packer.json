@@ -2,8 +2,10 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "gce_zone": "{{env `GCE_ZONE`}}",
+    "gce_project_id": "{{env `GCE_PROJECT_ID`}}",
     "version": "{{env `VERSION`}}",
-    "region": "us-east-1",
     "package": ""
   },
   "builders": [
@@ -11,7 +13,7 @@
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
-      "region": "{{user `region`}}",
+      "region": "{{user `aws_region`}}",
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
@@ -23,15 +25,18 @@
       },
       "instance_type": "t3.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "elotl-kipdev-{{user `version`}}"
+      "ami_name": "elotl-kipdev-{{user `version`}}",
+      "ami_groups": [
+          "all"
+      ]
     },
   {
       "type": "googlecompute",
       "account_file": "account.json",
-      "project_id": "elotl-kip",
+      "project_id": "{{user `gce_project_id`}}",
       "source_image_family": "ubuntu-1604-lts",
       "ssh_username": "packer",
-      "zone": "us-west1-a",
+      "zone": "{{user `gce_zone`}}",
       "image_name": "elotl-kipdev-{{user `version` | replace_all \".\" \"-\" }}",
       "image_family": "elotl-kipdev"
     }
