@@ -1,9 +1,12 @@
 [Unit]
 Description=Itzo launcher
 After=network.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
+Restart=on-failure
+RestartSec=3s
 ExecStart=/usr/bin/itzo-launcher --v=5
 
 [Install]
