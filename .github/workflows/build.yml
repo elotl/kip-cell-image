@@ -23,9 +23,11 @@ jobs:
       run: git fetch origin +refs/tags/*:refs/tags/*
 
     - name: Set VERSION
+      if: startsWith(github.event.ref, 'refs/tags/v')
       run: echo ::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}
 
     - name: Set GCE_VERSION
+      if: startsWith(github.event.ref, 'refs/tags/v')
       run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
 
     - name: Save GCE account.json
