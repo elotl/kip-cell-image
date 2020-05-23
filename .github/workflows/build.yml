@@ -71,7 +71,7 @@ jobs:
       if: startsWith(github.event.ref, 'refs/tags/v')
       run: |-
         gcloud compute images add-iam-policy-binding \
-          elotl-kipdev-${VERSION} \
+          elotl-kipdev-${GCE_VERSION} \
           --member=allAuthenticatedUsers \
           --role='roles/compute.imageUser'
 
