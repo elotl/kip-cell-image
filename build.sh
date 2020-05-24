@@ -14,7 +14,7 @@ cd $PKG_DIR
 ITZO_LAUNCHER_VERSION="v0.0.11"
 curl -fsL https://github.com/elotl/itzo-launcher/releases/download/$ITZO_LAUNCHER_VERSION/itzo-launcher-amd64 > itzo-launcher && chmod 755 itzo-launcher
 
-TOSI_VERSION="v0.0.3"
+TOSI_VERSION="v0.0.6"
 curl -fsL https://github.com/elotl/tosi/releases/download/$TOSI_VERSION/tosi-amd64 > tosi && chmod 755 tosi
 
 curl -fsL http://itzo-dev-download.s3.amazonaws.com/itzo-latest > itzo && chmod 755 itzo
