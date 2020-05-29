@@ -74,6 +74,12 @@ jobs:
           elotl-kipdev-${GCE_VERSION} \
           --member=allAuthenticatedUsers \
           --role='roles/compute.imageUser'
+        gcloud compute images delete elotl-kipdev-latest
+        gcloud compute images create --source-image=elotl-kipdev-${GCE_VERSION} elotl-kipdev-latest
+        gcloud compute images add-iam-policy-binding \
+          elotl-kipdev-latest \
+          --member=allAuthenticatedUsers \
+          --role='roles/compute.imageUser'
 
     - name: Create release
       if: startsWith(github.event.ref, 'refs/tags/v')
