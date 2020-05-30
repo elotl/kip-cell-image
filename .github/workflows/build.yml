@@ -7,6 +7,7 @@ env:
   AWS_REGION: us-east-1
   GCE_ZONE: us-west1-a
   GCE_PROJECT_ID: elotl-kip
+  GOOGLE_CLOUD_KEYFILE_JSON: account.json
 
 name: Build package
 jobs:
@@ -31,10 +32,10 @@ jobs:
       run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
 
     - name: Save GCE account.json
-      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" | base64 -d > account.json
+      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
 
     - name: Set GCE_SA_KEY
-      run: echo ::set-env name=GCE_SA_KEY::$(cat account.json)
+      run: echo ::set-env name=GCE_SA_KEY::$(cat $GOOGLE_CLOUD_KEYFILE_JSON)
 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:

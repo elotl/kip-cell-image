@@ -5,6 +5,7 @@
     "aws_region": "{{env `AWS_REGION`}}",
     "gce_zone": "{{env `GCE_ZONE`}}",
     "gce_project_id": "{{env `GCE_PROJECT_ID`}}",
+    "gce_account_file": "{{ env `GOOGLE_CLOUD_KEYFILE_JSON`}}",
     "version": "{{env `VERSION`}}",
     "package": ""
   },
@@ -32,7 +33,7 @@
     },
   {
       "type": "googlecompute",
-      "account_file": "account.json",
+      "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{user `gce_project_id`}}",
       "source_image_family": "ubuntu-1604-lts",
       "ssh_username": "packer",
