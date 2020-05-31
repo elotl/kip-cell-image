@@ -59,8 +59,10 @@
       "inline_shebang": "/usr/bin/env bash",
       "inline": [
           "set -e -x",
+          "curl -sSO https://dl.google.com/cloudagents/add-logging-agent-repo.sh",
+          "sudo bash add-logging-agent-repo.sh",
           "sudo apt-get update -y",
-          "sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert",
+          "sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert google-fluentd google-fluentd-catch-all-config-structured",
           "sudo dpkg -i /tmp/{{user `package`}}",
           "[ -f /etc/default/instance_configs.cfg ] && sudo sed -i 's/^ip_aliases.*$/ip_aliases = false/g' /etc/default/instance_configs.cfg || true",
           "sudo rm -rf /root/.ssh",
