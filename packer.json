@@ -69,7 +69,7 @@
           "sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert google-fluentd google-fluentd-catch-all-config-structured libnvidia-container-tools",
           "sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430",
           "sudo dpkg -i /tmp/{{user `package`}}",
-          "echo -e '[IpForwarding]\nip_aliases = false\n' > /etc/default/instance_configs.cfg.template",
+          "echo -e '[IpForwarding]\nip_aliases = false\n' | sudo tee /etc/default/instance_configs.cfg.template",
           "sudo mkdir -p /var/lib/docker/containers",
           "sudo rm -rf /root/.ssh",
           "sudo rm -rf /home/packer/.ssh",
