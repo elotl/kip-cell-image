@@ -23,12 +23,15 @@ jobs:
     - name: Fetch tags
       run: git fetch origin +refs/tags/*:refs/tags/*
 
-    - name: Set VERSION
+    - name: Set VERSION for release tags
       if: startsWith(github.event.ref, 'refs/tags/v')
       run: echo ::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}
 
+    - name: Set VERSION
+      if: "!startsWith(github.event.ref, 'refs/tags/v')"
+      run: echo ::set-env name=VERSION::$(git describe --dirty)
+
     - name: Set GCE_VERSION
-      if: startsWith(github.event.ref, 'refs/tags/v')
       run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
 
     - name: Save GCE account.json
@@ -61,7 +64,6 @@ jobs:
         target: packer.json
 
     - name: Build image
-      if: startsWith(github.event.ref, 'refs/tags/v')
       uses: operatehappy/packer-github-actions@v0.2.0
       with:
         command: build
@@ -69,7 +71,6 @@ jobs:
         target: packer.json
 
     - name: Make GCE image public
-      if: startsWith(github.event.ref, 'refs/tags/v')
       run: |-
         gcloud compute images add-iam-policy-binding \
           elotl-kipdev-${GCE_VERSION} \
