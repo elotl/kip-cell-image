@@ -35,18 +35,12 @@ jobs:
       run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
 
     - name: Save GCE account.json
-      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
-
-    - name: Set GCE_SA_KEY
-      run: echo ::set-env name=GCE_SA_KEY::$(cat $GOOGLE_CLOUD_KEYFILE_JSON)
-
-    - name: Mask GCE_SA_KEY
-      run: echo ::add-mask::$GCE_SA_KEY
+      run: echo "${{ secrets.GCP_ACCOUNT_JSON }}" > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '290.0.1'
-        service_account_key: ${{ env.GCE_SA_KEY }}
+        service_account_key: ${{ secrets.GCP_ACCOUNT_JSON }}
         project_id: ${{ env.GCE_PROJECT_ID }}
         export_default_credentials: true
 
