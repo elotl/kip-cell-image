@@ -35,9 +35,7 @@ jobs:
       run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
 
     - name: Save GCE account.json
-      run: |
-        echo "${{ secrets.GCP_ACCOUNT_JSON }}" > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
-        cat ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
+      run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
 
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
