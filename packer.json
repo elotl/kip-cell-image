@@ -61,7 +61,9 @@
     },
     {
       "type": "shell",
-      "only": "amazon-ebs",
+      "only": [
+          "amazon-ebs"
+      ],
       "environment_vars": [
           "KIP_PACKAGE={{user `package`}}"
       ],
@@ -69,7 +71,9 @@
     },
     {
       "type": "shell",
-      "only": "googlecompute",
+      "only": [
+          "googlecompute"
+      ],
       "environment_vars": [
           "KIP_PACKAGE={{user `package`}}"
       ],
