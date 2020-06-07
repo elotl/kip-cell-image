@@ -19,9 +19,10 @@ sudo dpkg -i /tmp/$KIP_PACKAGE
 sudo mv /tmp/google-fluentd-cell.conf /etc/google-fluentd/config.d/elotl-cell.conf
 
 echo -e '[IpForwarding]\nip_aliases = false\n' | sudo tee /etc/default/instance_configs.cfg.template
+
 sudo mkdir -p /var/lib/docker/containers
 
-sudo ln -snf /var/run/log/journal /var/log/journal
+sudo mkdir -p /var/log/journal
 
 sudo rm -rf /root/.ssh
 sudo rm -rf /home/packer/.ssh
