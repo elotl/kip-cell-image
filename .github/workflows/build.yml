@@ -90,6 +90,8 @@ jobs:
           --name elotl-kipdev-latest \
           --source-image-id ${image_id} \
           --source-region ${AWS_REGION} | jq -r '.ImageId')
+        aws ec2 wait image-available \
+            --image-ids ${new_image_id}
         aws ec2 modify-image-attribute \
           --image-id ${new_image_id} \
           --launch-permission "Add=[{Group=all}]"
