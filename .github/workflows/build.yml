@@ -5,6 +5,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
+  AWS_DEFAULT_REGION: us-east-1
   GCE_ZONE: us-west1-a
   GCE_PROJECT_ID: elotl-kip
   GOOGLE_CLOUD_KEYFILE_JSON: account.json
@@ -83,7 +84,6 @@ jobs:
     - name: Create elotl-kipdev-latest on AWS
       run: |-
         image_id=$(aws ec2 describe-images \
-          --region ${AWS_REGION} \
           --filters Name=name,Values=elotl-kipdev-${VERSION} | \
           jq -r '.Images[0].ImageId')
         new_image_id=$(aws ec2 copy-image \
