@@ -67,7 +67,7 @@ jobs:
         arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
         target: packer.json
 
-    - name: Make GCE image public
+    - name: Create elotl-kipdev-latest on GCE
       run: |-
         gcloud compute images add-iam-policy-binding \
           elotl-kipdev-${GCE_VERSION} \
@@ -79,6 +79,20 @@ jobs:
           elotl-kipdev-latest \
           --member=allAuthenticatedUsers \
           --role='roles/compute.imageUser'
+
+    - name: Create elotl-kipdev-latest on AWS
+      run: |-
+        image_id=$(aws ec2 describe-images \
+          --region ${AWS_REGION} \
+          --filters Name=name,Values=elotl-kipdev-${VERSION} | \
+          jq -r '.Images[0].ImageId')
+        new_image_id=$(aws ec2 copy-image \
+          --name elotl-kipdev-latest \
+          --source-image-id ${image_id} \
+          --source-region ${AWS_REGION} | jq -r '.ImageId')
+        aws ec2 modify-image-attribute \
+          --image-id ${new_image_id} \
+          --launch-permission "Add=[{Group=all}]"
 
     - name: Create release
       if: startsWith(github.event.ref, 'refs/tags/v')
