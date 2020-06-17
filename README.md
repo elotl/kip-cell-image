@@ -1,6 +1,6 @@
 # kip-cell-deb
 
-Debian package for installing components required on a Kip cell image. Images using the package are also built automatically for every change.
+Debian package for installing components required on a [Kip](https://github.com/elotl/kip) cell image. Images using the package are also built automatically for every change.
 
 ## Usage
 
@@ -11,28 +11,28 @@ Debian package for installing components required on a Kip cell image. Images us
 
 To build a debian package with all these components:
 
-    $ ./build.sh
+    ./build.sh
 
 This will create a package in the current directory.
 
 You can specify a version number for the build:
 
-    $ VERSION=v0.1.2-foo1 ./build.sh
+    VERSION=v0.1.2-foo1 ./build.sh
     [...]
-    $ ls -1 kip-cell_*_amd64.deb
+    ls -1 kip-cell_*_amd64.deb
     kip-cell_0.1.2-foo1_amd64.deb
 
 You can take this debian package and install it on your own image if you would like to create an image that can boot up as a Kip cell.
 
 Using the .deb package, you can also build an AWS and GCP image:
 
-    $ VERSION=v0.1.2-foo1 ./build.sh
+    VERSION=v0.1.2-foo1 ./build.sh
     [...]
     # Configure your GCE and AWS access.
-    $ export GOOGLE_CLOUD_KEYFILE_JSON=/home/vilmos/<my-gce-account-file>.json
-    $ export AWS_ACCESS_KEY_ID=...
-    $ export AWS_SECRET_ACCESS_KEY=...
-    $ packer build -var package=kip-cell_${VERSION:1}_amd64.deb packer.json
+    export GOOGLE_CLOUD_KEYFILE_JSON=/home/ubuntu/<my-gce-account-file>.json
+    export AWS_ACCESS_KEY_ID=...
+    export AWS_SECRET_ACCESS_KEY=...
+    packer build -var package=kip-cell_${VERSION:1}_amd64.deb packer.json
 
 This needs [packer](https://www.packer.io/).
 
@@ -40,8 +40,8 @@ This needs [packer](https://www.packer.io/).
 
 A GitHub Action is configured to build images automatically for every push. The image name is based on `git describe`. For example:
 
-    $ git tag -am "v0.1.2-foo1" v0.1.2-foo1
-    $ git push --tags
+    git tag -am "v0.1.2-foo1" v0.1.2-foo1
+    git push --tags
 
 The resulting image in this case will be called `elotl-kipdev-v0.1.2-foo1` on AWS, and `elotl-kipdev-v0-1-2-foo1` on GCE.
 
