@@ -1,4 +1,4 @@
-# kip-cell-deb
+# Debian package and scripts for building Kip cell images
 
 Debian package for installing components required on a [Kip](https://github.com/elotl/kip) cell image. Images using the package are also built automatically for every change.
 
