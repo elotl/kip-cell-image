@@ -56,6 +56,17 @@
     },
     {
       "type": "file",
+      "only": [
+          "amazon-ebs"
+      ],
+      "source": "aws-fluentd-cell.conf",
+      "destination": "/tmp/aws-fluentd-cell.conf"
+    },
+    {
+      "type": "file",
+      "only": [
+          "googlecompute"
+      ],
       "source": "google-fluentd-cell.conf",
       "destination": "/tmp/google-fluentd-cell.conf"
     },

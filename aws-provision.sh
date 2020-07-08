@@ -10,6 +10,11 @@ sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools
 sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
 
+curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh
+sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs
+sudo mv /tmp/aws-fluentd-cell.conf /etc/td-agent/td-agent.conf
+sudo systemctl enable td-agent
+
 sudo dpkg -i /tmp/$KIP_PACKAGE
 
 sudo rm -rf /root/.ssh
