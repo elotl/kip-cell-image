@@ -11,10 +11,10 @@ sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-co
 sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
 
 curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh
-sudo apt-get install -y gcc make
+sudo apt-get install -y g++ make
 sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs
 sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kubernetes_metadata_filter
-sudo apt-get remove -y gcc make
+sudo apt-get remove -y g++ make
 sudo mv /tmp/aws-fluentd-cell.conf /etc/td-agent/td-agent.conf
 sudo systemctl enable td-agent
 
