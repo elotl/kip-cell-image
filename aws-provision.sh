@@ -25,6 +25,10 @@ sudo dpkg -i /tmp/$KIP_PACKAGE
 
 sudo apt-get autoremove -y
 
+sudo mkdir -p /var/lib/docker/containers
+
+sudo mkdir -p /var/log/journal
+
 sudo rm -rf /root/.ssh
 sudo rm -rf /home/packer/.ssh
 sudo rm -rf /home/ubuntu/.ssh
