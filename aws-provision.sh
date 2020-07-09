@@ -16,6 +16,7 @@ sudo sed -i '/^Group=.*$/d' /lib/systemd/system/td-agent.service
 sudo apt-get install -y g++ make
 sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs
 sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kubernetes_metadata_filter
+sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-concat
 sudo apt-get remove -y g++ make
 sudo mv /tmp/aws-fluentd-cell.conf /etc/td-agent/td-agent.conf
 sudo systemctl daemon-reload
