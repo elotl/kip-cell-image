@@ -14,7 +14,7 @@ curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.s
 sudo sed -i '/^User=.*$/d' /lib/systemd/system/td-agent.service
 sudo sed -i '/^Group=.*$/d' /lib/systemd/system/td-agent.service
 sudo apt-get install -y g++ make
-sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs
+sudo /opt/td-agent/embedded/bin/fluent-gem install --version '0.4.5' fluent-plugin-cloudwatch-logs
 sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kubernetes_metadata_filter
 sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-concat
 sudo apt-get remove -y g++ make
