@@ -18,6 +18,9 @@ sudo dpkg -i /tmp/$KIP_PACKAGE
 
 sudo apt-get autoremove -y
 
+sudo mkdir -p /usr/share/collectd
+sudo touch /usr/share/collectd/types.db
+
 sudo mkdir -p /var/lib/docker/containers
 
 sudo mkdir -p /var/log/journal
