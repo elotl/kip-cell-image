@@ -10,17 +10,9 @@ sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools
 sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
 
-curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh
-sudo sed -i '/^User=.*$/d' /lib/systemd/system/td-agent.service
-sudo sed -i '/^Group=.*$/d' /lib/systemd/system/td-agent.service
-sudo apt-get install -y g++ make
-sudo /opt/td-agent/embedded/bin/fluent-gem install --version '0.4.5' fluent-plugin-cloudwatch-logs
-sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kubernetes_metadata_filter
-sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-concat
-sudo apt-get remove -y g++ make
-sudo mv /tmp/aws-fluentd-cell.conf /etc/td-agent/td-agent.conf
-sudo systemctl daemon-reload
-sudo systemctl enable td-agent
+curl -sfLO https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb && rm amazon-cloudwatch-agent.deb
+sudo cp /tmp/aws-cloudwatch-agent.conf /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 
 sudo dpkg -i /tmp/$KIP_PACKAGE
 
