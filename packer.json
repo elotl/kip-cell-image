@@ -59,8 +59,8 @@
       "only": [
           "amazon-ebs"
       ],
-      "source": "aws-cloudwatch-agent.conf",
-      "destination": "/tmp/aws-cloudwatch-agent.conf"
+      "source": "aws-fluentd-cell.conf",
+      "destination": "/tmp/aws-fluentd-cell.conf"
     },
     {
       "type": "file",
