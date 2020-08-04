@@ -63,20 +63,23 @@ jobs:
 
     - name: Create elotl-kip-<tag> on AWS
       run: |-
+        image_id=$(aws ec2 describe-images \
+          --filters Name=name,Values=elotl-kipdev-${VERSION} | \
+          jq -r '.Images[0].ImageId')
+        echo "waiting for source image ${image_id}"
+        aws ec2 wait image-available \
+          --image-ids ${image_id}
         for dst_region in ap-south-1 eu-west-3 eu-west-2 eu-west-1 eu-north-1 ap-northeast-2 ap-northeast-1 sa-east-1 ca-central-1 ap-southeast-1 ap-southeast-2 eu-central-1 us-east-1 us-east-2 us-west-1 us-west-2; do
-          image_id=$(aws ec2 describe-images \
-            --filters Name=name,Values=elotl-kipdev-${VERSION} | \
-            jq -r '.Images[0].ImageId')
-          aws ec2 wait image-available \
-            --image-ids ${image_id}
           new_image_id=$(aws ec2 copy-image \
             --region ${dst_region} \
             --name elotl-kip-${GIT_TAG} \
             --source-image-id ${image_id} \
             --source-region ${AWS_REGION} | jq -r '.ImageId')
+          echo "waiting for new image ${new_image_id} in region ${dst_region}"
           aws ec2 wait image-available \
             --region ${dst_region} \
             --image-ids ${new_image_id}
+          echo "making ${new_image_id} public"
           aws ec2 modify-image-attribute \
             --region ${dst_region} \
             --image-id ${new_image_id} \
