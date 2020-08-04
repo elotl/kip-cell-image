@@ -1,0 +1,84 @@
+# This workflow runs for release tags like v1.2.3, using the image previously
+# built by the build workflow.
+on:
+  push:
+    tags:
+    - v*
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  AWS_DEFAULT_REGION: us-east-1
+  GCE_ZONE: us-west1-a
+  GCE_PROJECT_ID: elotl-kip
+  GOOGLE_CLOUD_KEYFILE_JSON: account.json
+
+name: Build package
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Fetch tags
+      run: git fetch origin +refs/tags/*:refs/tags/*
+
+    - name: Set GIT_TAG
+      run: echo ::set-env name=GIT_TAG::${GITHUB_REF/refs\/tags\//}
+
+    - name: Set VERSION
+      run: echo ::set-env name=VERSION::$(git describe HEAD --exclude=$GIT_TAG)
+
+    - name: Set GCE_VERSION
+      run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
+
+    - name: Save GCE account.json
+      run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
+
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '290.0.1'
+        service_account_key: ${{ secrets.GCP_ACCOUNT_JSON }}
+        project_id: ${{ env.GCE_PROJECT_ID }}
+        export_default_credentials: true
+
+    - name: Create elotl-kip-latest on GCE
+      run: |-
+        gcloud compute images add-iam-policy-binding \
+          elotl-kipdev-${GCE_VERSION} \
+          --member=allAuthenticatedUsers \
+          --role='roles/compute.imageUser'
+        gcloud compute images delete elotl-kip-latest
+        gcloud compute images create --source-image=elotl-kipdev-${GCE_VERSION} elotl-kip-latest
+        gcloud compute images add-iam-policy-binding \
+          elotl-kip-latest \
+          --member=allAuthenticatedUsers \
+          --role='roles/compute.imageUser'
+
+    - name: Create elotl-kip-<tag> on AWS
+      run: |-
+        for dst_region in ap-south-1 eu-west-3 eu-west-2 eu-west-1 eu-north-1 ap-northeast-2 ap-northeast-1 sa-east-1 ca-central-1 ap-southeast-1 ap-southeast-2 eu-central-1 us-east-1 us-east-2 us-west-1 us-west-2; do
+          image_id=$(aws ec2 describe-images \
+            --filters Name=name,Values=elotl-kipdev-${VERSION} | \
+            jq -r '.Images[0].ImageId')
+          aws ec2 wait image-available \
+            --image-ids ${image_id}
+          new_image_id=$(aws ec2 copy-image \
+            --region ${dst_region} \
+            --name elotl-kip-${GIT_TAG} \
+            --source-image-id ${image_id} \
+            --source-region ${AWS_REGION} | jq -r '.ImageId')
+          aws ec2 wait image-available \
+            --region ${dst_region} \
+            --image-ids ${new_image_id}
+          aws ec2 modify-image-attribute \
+            --region ${dst_region} \
+            --image-id ${new_image_id} \
+            --launch-permission "Add=[{Group=all}]"
+        done
