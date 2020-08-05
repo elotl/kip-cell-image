@@ -45,30 +45,4 @@ A GitHub Action is configured to build images automatically for every push. The 
 
 The resulting image in this case will be called `elotl-kipdev-v0.1.2-foo1` on AWS, and `elotl-kipdev-v0-1-2-foo1` on GCE.
 
-Git tags with a semantic version will update the `elotl-kipdev-latest` image with that build.
-
-## Update elotl-kip-latest
-
-The image `elotl-kip-latest` is the default one in Kip. It is not updated automatically. To update it manually on GCE, you can use this script:
-
-    gcloud compute --quiet --project elotl-kip images delete \
-        elotl-kip-latest
-    gcloud compute --quiet --project elotl-kip images create \
-        --source-image=elotl-kipdev-latest \
-        elotl-kip-latest
-    gcloud compute --quiet --project elotl-kip images add-iam-policy-binding \
-        elotl-kip-latest \
-        --member=allAuthenticatedUsers \
-        --role='roles/compute.imageUser'
-
-On AWS:
-
-    AWS_REGION=us-east-1
-    image_id=$(aws ec2 describe-images \
-        --region ${AWS_REGION} \
-        --filters Name=name,Values=elotl-kipdev-latest | \
-        jq -r '.Images[0].ImageId')
-    aws ec2 copy-image \
-        --name elotl-kipdev-latest \
-        --source-image-id ${image_id} \
-        --source-region ${AWS_REGION}
+Git tags with a semantic version like `v1.2.3` will update `elotl-kip-latest` on GCE (since on GCE, Kip uses this fixed image name by default), and create a new `elotl-kip-<version>` image on AWS (on AWS, by the default the latest `elotl-kip-*` is used by kip).
