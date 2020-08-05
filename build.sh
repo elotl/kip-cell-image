@@ -16,7 +16,7 @@ curl -fsL $(curl -s https://api.github.com/repos/elotl/itzo-launcher/releases/la
 
 curl -fsL $(curl -s https://api.github.com/repos/elotl/tosi/releases/latest | jq -r '.assets[].browser_download_url' | head -n1) > tosi && chmod 755 tosi
 
-curl -fsL http://itzo-dev-download.s3.amazonaws.com/itzo-latest > itzo && chmod 755 itzo
+curl -fsL https://itzo-kip-download.s3.amazonaws.com/itzo-latest > itzo && chmod 755 itzo
 
 curl -fsL http://itzo-dev-download.s3.amazonaws.com/kube-router > kube-router && chmod 755 kube-router
 
