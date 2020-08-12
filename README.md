@@ -45,4 +45,4 @@ A GitHub Action is configured to build images automatically for every push. The 
 
 The resulting image in this case will be called `elotl-kipdev-v0.1.2-foo1` on AWS, and `elotl-kipdev-v0-1-2-foo1` on GCE.
 
-Git tags with a semantic version like `v1.2.3` will update `elotl-kip-latest` on GCE (since on GCE, Kip uses this fixed image name by default), and create a new `elotl-kip-<version>` image on AWS (on AWS, by the default the latest `elotl-kip-*` is used by kip).
+Git tags with a semantic version like `v1.2.3` will update `elotl-kip-latest` on GCE (since on GCE, Kip uses this fixed image name by default), and create a new `elotl-kip-<version>` image on AWS (on AWS, by the default the latest AMI named `elotl-kip-*` is used by kip).
