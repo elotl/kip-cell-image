@@ -9,6 +9,8 @@ Debian package for installing components required on a [Kip](https://github.com/
 * [tosi](https://github.com/elotl/tosi), for pulling container images for pods and
 * [kube-router](https://github.com/cloudnativelabs/kube-router), the network agent acting as a Kubernetes service proxy and Kubernetes network policy agent.
 
+The default images use [itzo-launcher](https://github.com/elotl/itzo-launcher) for ensuring the right version of itzo is available at boot, and perform boot-time tasks.
+
 To build a debian package with all these components:
 
     ./build.sh
