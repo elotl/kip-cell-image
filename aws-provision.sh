@@ -2,12 +2,18 @@
 
 set -euxo pipefail
 
-sudo systemctl disable apt-daily.timer || true
-sudo systemctl stop apt-daily.timer || true
-sudo systemctl mask apt-daily.timer || true
-sudo systemctl disable apt-daily-upgrade.timer || true
-sudo systemctl stop apt-daily-upgrade.timer || true
-sudo systemctl mask apt-daily-upgrade.timer || true
+# Disable timers and services performing automatic upgrades after boot. On
+# small instances, upgrades will hog the resources, and might render the
+# instance unresponsive for a short while.
+for apt_unit in \
+    apt-daily.timer \
+    apt-daily.service \
+    apt-daily-upgrade.timer \
+    apt-daily-upgrade.service; do
+    sudo systemctl disable $apt_unit
+    sudo systemctl stop $apt_unit
+    sudo systemctl mask $apt_unit
+done
 
 DIST=$(. /etc/os-release; echo $ID$VERSION_ID)
 curl -sfL https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add -
@@ -41,6 +47,7 @@ sudo systemctl enable td-agent
 
 sudo dpkg -i /tmp/$KIP_PACKAGE
 
+sudo apt-get remove -y unattended-upgrades
 sudo apt-get autoremove -y
 
 sudo mkdir -p /usr/share/collectd
