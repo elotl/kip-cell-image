@@ -3,7 +3,7 @@ on:
     branches:
     - master
     tags-ignore:
-    - '*'
+    - v*
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -15,7 +15,7 @@ env:
   GCE_PROJECT_ID: elotl-kip
   GOOGLE_CLOUD_KEYFILE_JSON: account.json
 
-name: Build package
+name: Build image
 jobs:
   build:
     runs-on: ubuntu-18.04

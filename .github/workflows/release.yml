@@ -15,7 +15,7 @@ env:
   GCE_PROJECT_ID: elotl-kip
   GOOGLE_CLOUD_KEYFILE_JSON: account.json
 
-name: Build package
+name: Release image
 jobs:
   build:
     runs-on: ubuntu-18.04
