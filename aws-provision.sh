@@ -2,10 +2,12 @@
 
 set -euxo pipefail
 
-sudo systemd disable apt-daily.timer || true
-sudo systemd stop apt-daily.timer || true
-sudo systemd disable apt-daily-upgrade.timer || true
-sudo systemd stop apt-daily-upgrade.timer || true
+sudo systemctl disable apt-daily.timer || true
+sudo systemctl stop apt-daily.timer || true
+sudo systemctl mask apt-daily.timer || true
+sudo systemctl disable apt-daily-upgrade.timer || true
+sudo systemctl stop apt-daily-upgrade.timer || true
+sudo systemctl mask apt-daily-upgrade.timer || true
 
 DIST=$(. /etc/os-release; echo $ID$VERSION_ID)
 curl -sfL https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add -
