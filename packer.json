@@ -21,7 +21,7 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+          "name": "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*",
           "root-device-type": "ebs"
         },
         "owners": ["099720109477"],
@@ -29,16 +29,13 @@
       },
       "instance_type": "t3.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "elotl-kipdev-{{user `version`}}",
-      "ami_groups": [
-          "all"
-      ]
+      "ami_name": "elotl-kipdev-{{user `version`}}"
     },
   {
       "type": "googlecompute",
       "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{user `gce_project_id`}}",
-      "source_image_family": "ubuntu-1604-lts",
+      "source_image_family": "ubuntu-1804-lts",
       "ssh_username": "packer",
       "zone": "{{user `gce_zone`}}",
       "image_name": "elotl-kipdev-{{user `version` | replace_all \".\" \"-\" }}",
