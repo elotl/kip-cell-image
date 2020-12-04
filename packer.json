@@ -29,7 +29,11 @@
       },
       "instance_type": "t3.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "elotl-kipdev-{{user `version`}}"
+      "encrypt_boot": false,
+      "ami_name": "elotl-kipdev-{{user `version`}}",
+      "ami_groups": [
+          "all"
+      ]
     },
   {
       "type": "googlecompute",
