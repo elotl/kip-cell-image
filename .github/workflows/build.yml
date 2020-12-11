@@ -1,9 +1,9 @@
 on:
   push:
     branches:
-    - master
+      - master
     tags-ignore:
-    - v*
+      - v*
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,10 +30,14 @@ jobs:
       run: git fetch origin +refs/tags/*:refs/tags/*
 
     - name: Set VERSION
-      run: echo ::set-env name=VERSION::$(git describe --dirty)
+      id: set_version
+      run: echo ::set-output name=VERSION::$(git describe --dirty)
 
     - name: Set GCE_VERSION
-      run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
+      id: set_gce_version
+      env:
+        VERSION: ${{ steps.set_version.outputs.VERSION }}
+      run: echo ::set-output name=GCE_VERSION::${VERSION//./-}
 
     - name: Save GCE account.json
       run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
@@ -46,6 +50,9 @@ jobs:
         export_default_credentials: true
 
     - name: Build package
+      env:
+        VERSION: ${{ steps.set_version.outputs.VERSION }}
+        GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
       run: |
         sudo apt-get update -y && sudo apt-get install debhelper devscripts curl jq
         ./build.sh
@@ -56,6 +63,9 @@ jobs:
 
     - name: Validate template
       uses: operatehappy/packer-github-actions@v0.2.0
+      env:
+        VERSION: ${{ steps.set_version.outputs.VERSION }}
+        GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
       with:
         command: validate
         arguments: -syntax-only
@@ -63,12 +73,18 @@ jobs:
 
     - name: Build image
       uses: operatehappy/packer-github-actions@v0.2.0
+      env:
+        VERSION: ${{ steps.set_version.outputs.VERSION }}
+        GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
       with:
         command: build
         arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
         target: packer.json
 
     - name: Create elotl-kipdev-latest on GCE
+      env:
+        VERSION: ${{ steps.set_version.outputs.VERSION }}
+        GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
       run: |-
         gcloud compute images add-iam-policy-binding \
           elotl-kipdev-${GCE_VERSION} \
