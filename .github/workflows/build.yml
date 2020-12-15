@@ -1,9 +1,9 @@
 on: push
 #  push:
 #    branches:
-#    - master
+#      - master
 #    tags-ignore:
-#    - v*
+#      - v*
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -21,61 +21,76 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
 
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: '0'
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
 
-    - name: Fetch tags
-      run: git fetch origin +refs/tags/*:refs/tags/*
+      - name: Fetch tags
+        run: git fetch origin +refs/tags/*:refs/tags/*
 
-    - name: Set VERSION
-      run: echo ::set-env name=VERSION::$(git describe --dirty)
+      - name: Set VERSION
+        id: set_version
+        run: echo ::set-output name=VERSION::$(git describe --dirty)
 
-    - name: Set GCE_VERSION
-      run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
+      - name: Set GCE_VERSION
+        id: set_gce_version
+        env:
+          VERSION: ${{ steps.set_version.outputs.VERSION }}
+        run: echo ::set-output name=GCE_VERSION::${VERSION//./-}
 
-    - name: Save GCE account.json
-      run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
+      - name: Save GCE account.json
+        run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
 
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      with:
-        version: '290.0.1'
-        service_account_key: ${{ secrets.GCP_ACCOUNT_JSON }}
-        project_id: ${{ env.GCE_PROJECT_ID }}
-        export_default_credentials: true
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GCP_ACCOUNT_JSON }}
+          project_id: ${{ env.GCE_PROJECT_ID }}
+          export_default_credentials: true
 
-    - name: Build package
-      run: |
-        sudo apt-get update -y && sudo apt-get install debhelper devscripts curl jq
-        ./build.sh
+      - name: Build package
+        env:
+          VERSION: ${{ steps.set_version.outputs.VERSION }}
+          GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
+        run: |
+          sudo apt-get update -y && sudo apt-get install debhelper devscripts curl jq
+          ./build.sh
+      - name: Set package name
+        id: get_package_name
+        run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
 
-    - name: Set package name
-      id: get_package_name
-      run: echo ::set-output name=pkgname::$(ls -1 kip-cell_*.deb)
+      - name: Validate template
+        uses: operatehappy/packer-github-actions@v0.2.0
+        env:
+          VERSION: ${{ steps.set_version.outputs.VERSION }}
+          GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: packer.json
 
-    - name: Validate template
-      uses: operatehappy/packer-github-actions@v0.2.0
-      with:
-        command: validate
-        arguments: -syntax-only
-        target: packer.json
+      - name: Build image
+        uses: operatehappy/packer-github-actions@v0.2.0
+        env:
+          VERSION: ${{ steps.set_version.outputs.VERSION }}
+          GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
+        with:
+          command: build
+          arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
+          target: packer.json
 
-    - name: Build image
-      uses: operatehappy/packer-github-actions@v0.2.0
-      with:
-        command: build
-        arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
-        target: packer.json
-
-    - name: Create elotl-kipdev-latest on GCE
-      run: |-
-        gcloud compute images add-iam-policy-binding \
-          elotl-kipdev-${GCE_VERSION} \
-          --member=allAuthenticatedUsers \
-          --role='roles/compute.imageUser'
-        gcloud compute images create --source-image=elotl-kipdev-${GCE_VERSION} elotl-kipdev-1604podman
-        gcloud compute images add-iam-policy-binding \
-          elotl-kipdev-latest \
-          --member=allAuthenticatedUsers \
-          --role='roles/compute.imageUser'
+      - name: Create elotl-kipdev-latest on GCE
+        env:
+          VERSION: ${{ steps.set_version.outputs.VERSION }}
+          GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
+        run: |-
+          gcloud compute images add-iam-policy-binding \
+            elotl-kipdev-${GCE_VERSION} \
+            --member=allAuthenticatedUsers \
+            --role='roles/compute.imageUser'
+          gcloud compute images create --source-image=elotl-kipdev-${GCE_VERSION} elotl-kipdev-podman-from-snap
+          gcloud compute images add-iam-policy-binding \
+            elotl-kipdev-latest \
+            --member=allAuthenticatedUsers \
+            --role='roles/compute.imageUser'
