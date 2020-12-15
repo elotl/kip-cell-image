@@ -19,6 +19,9 @@ sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert google-fluentd google-fluentd-catch-all-config-structured stackdriver-agent libnvidia-container-tools snapd
 sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
 sudo snap install podman --edge --devmode
+sudo systemctl-path search-binaries
+sudo podman system info
+sudo which podman
 sudo systemctl list-sockets --all
 sudo systemctl enable podman.socket
 
