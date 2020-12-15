@@ -1,9 +1,9 @@
-on:
-  push:
-    branches:
-    - master
-    tags-ignore:
-    - v*
+on: push
+#  push:
+#    branches:
+#    - master
+#    tags-ignore:
+#    - v*
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -74,8 +74,8 @@ jobs:
           elotl-kipdev-${GCE_VERSION} \
           --member=allAuthenticatedUsers \
           --role='roles/compute.imageUser'
-        gcloud compute images delete elotl-kipdev-latest
-        gcloud compute images create --source-image=elotl-kipdev-${GCE_VERSION} elotl-kipdev-latest
+#        gcloud compute images delete elotl-kipdev-latest
+        gcloud compute images create --source-image=elotl-kipdev-${GCE_VERSION} elotl-kipdev-1604podman
         gcloud compute images add-iam-policy-binding \
           elotl-kipdev-latest \
           --member=allAuthenticatedUsers \
