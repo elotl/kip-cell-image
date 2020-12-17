@@ -30,13 +30,13 @@ jobs:
       run: git fetch origin +refs/tags/*:refs/tags/*
 
     - name: Set GIT_TAG
-      run: echo ::set-env name=GIT_TAG::${GITHUB_REF/refs\/tags\//}
+      run: echo "GIT_TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
 
     - name: Set VERSION
-      run: echo ::set-env name=VERSION::$(git describe HEAD --exclude=$GIT_TAG)
+      run: echo "VERSION=$(git describe HEAD --exclude=$GIT_TAG)" >> $GITHUB_ENV
 
     - name: Set GCE_VERSION
-      run: echo ::set-env name=GCE_VERSION::${VERSION//./-}
+      run: echo "GCE_VERSION=${VERSION//./-}" >> $GITHUB_ENV
 
     - name: Save GCE account.json
       run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
