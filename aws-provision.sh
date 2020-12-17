@@ -17,16 +17,24 @@ done
 
 DIST=$(. /etc/os-release; echo $ID$VERSION_ID)
 VERSION_ID=$(. /etc/os-release; echo $VERSION_ID)
+
 curl -sfL https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add -
 curl -sfL https://nvidia.github.io/libnvidia-container/$DIST/libnvidia-container.list | sudo tee /etc/apt/sources.list.d/libnvidia-container.list
 sudo add-apt-repository -y ppa:graphics-drivers/ppa
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
+
+echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key | sudo apt-key add -
+
 sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools
-sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-driver-430 podman
+sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
 
-curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh
+sudo apt-get install -y podman
+# Remove parameter not supported by systemd on 16.04.
+sudo sed -i '/StartLimitIntervalSec/d' /usr/lib/systemd/system/podman.service
+sudo systemctl daemon-reload
+
+curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh
 sudo sed -i '/^User=.*$/d' /lib/systemd/system/td-agent.service
 sudo sed -i '/^Group=.*$/d' /lib/systemd/system/td-agent.service
 sudo apt-get install -y g++ make
@@ -46,11 +54,11 @@ sudo mv /tmp/aws-fluentd-cell.conf /etc/td-agent/td-agent.conf
 sudo REGION=us-east-1 CLUSTER_NAME=dummy /opt/td-agent/embedded/bin/fluentd --dry-run -c /etc/td-agent/td-agent.conf
 sudo systemctl daemon-reload
 sudo systemctl enable td-agent
-sudo systemctl enable podman.socket
 #curl -sfLO https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 #sudo dpkg -i amazon-cloudwatch-agent.deb && rm amazon-cloudwatch-agent.deb
 #sudo cp /tmp/aws-cloudwatch-agent.conf /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 
+sudo systemctl enable podman.socket
 
 sudo dpkg -i /tmp/$KIP_PACKAGE
 
@@ -69,4 +77,5 @@ sudo rm -rf /home/packer/.ssh
 sudo rm -rf /home/ubuntu/.ssh
 
 podman system info
+
 itzo --version
