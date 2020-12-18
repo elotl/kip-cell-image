@@ -84,15 +84,10 @@ jobs:
           # Wait for images to become available, and make them public.
           dst_region=$(echo ${image} | cut -d':' -f 1)
           new_image_id=$(echo ${image} | cut -d':' -f 2)
-          # Since the copy might take longer than the hardcoded wait timeout in
-          # awscli, retry a few times. If it fails for all attempts,
-          # modify-image-attribute will fail the build.
-          for i in {1..3}; do
-            echo "waiting for new image ${new_image_id} in region ${dst_region}"
-            aws ec2 wait image-available \
-              --region ${dst_region} \
-              --image-ids ${new_image_id} && break || sleep 1
-          done
+          echo "waiting for new image ${new_image_id} in region ${dst_region}"
+          aws ec2 wait image-available \
+            --region ${dst_region} \
+            --image-ids ${new_image_id}
           echo "making ${new_image_id} public"
           aws ec2 modify-image-attribute \
             --region ${dst_region} \
