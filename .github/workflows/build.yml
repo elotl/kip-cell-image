@@ -74,7 +74,7 @@ jobs:
         GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
       with:
         command: validate
-        arguments: -syntax-only
+        # arguments: -syntax-only
         target: packer.json
 
     - name: Build image

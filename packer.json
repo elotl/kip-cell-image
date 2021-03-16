@@ -1,132 +1,135 @@
 {
-  "variables": {
-    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
-    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
-    "aws_region": "{{env `AWS_REGION`}}",
-    "gce_zone": "{{env `GCE_ZONE`}}",
-    "gce_project_id": "{{env `GCE_PROJECT_ID`}}",
-    "gce_account_file": "{{ env `GOOGLE_CLOUD_KEYFILE_JSON`}}",
-    "azure_client_id": "{{ env `AZURE_CLIENT_ID`}}",
-    "azure_client_secret": "{{ env `AZURE_CLIENT_SECRET`}}",
-    "azure_tenant_id": "{{ env `AZURE_TENANT_ID`}}",
-    "azure_subscription_id": "{{ env `AZURE_SUBSCRIPTION_ID`}}",
-    "azure_region": "{{ env `AZURE_REGION`}}",
-    "version": "{{env `VERSION`}}",
-    "package": ""
-  },
   "builders": [
     {
-      "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
-      "secret_key": "{{user `aws_secret_key`}}",
+      "ami_name": "elotl-kipdev-{{user `version`}}",
+      "encrypt_boot": false,
+      "instance_type": "t3.micro",
       "region": "{{user `aws_region`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
       "source_ami_filter": {
         "filters": {
-          "virtualization-type": "hvm",
           "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
-          "root-device-type": "ebs"
+          "root-device-type": "ebs",
+          "virtualization-type": "hvm"
         },
-        "owners": ["099720109477"],
-        "most_recent": true
+        "most_recent": true,
+        "owners": [
+          "099720109477"
+        ]
       },
-      "instance_type": "t3.micro",
       "ssh_username": "ubuntu",
-      "encrypt_boot": false,
-      "ami_name": "elotl-kipdev-{{user `version`}}"
+      "type": "amazon-ebs"
     },
-  {
-      "type": "googlecompute",
+    {
       "account_file": "{{user `gce_account_file`}}",
+      "image_family": "elotl-kipdev",
+      "image_name": "elotl-kipdev-{{user `version` | replace_all \".\" \"-\" }}",
       "project_id": "{{user `gce_project_id`}}",
       "source_image_family": "ubuntu-1604-lts",
       "ssh_username": "packer",
-      "zone": "{{user `gce_zone`}}",
-      "image_name": "elotl-kipdev-{{user `version` | replace_all \".\" \"-\" }}",
-      "image_family": "elotl-kipdev"
+      "type": "googlecompute",
+      "zone": "{{user `gce_zone`}}"
     },
     {
-      "type": "azure-arm",
       "client_id": "{{user `azure_client_id`}}",
       "client_secret": "{{user `azure_client_secret`}}",
-      "tenant_id": "{{user `azure_tenant_id`}}",
-      "subscription_id": "{{user `azure_subscription_id`}}",
-
-      "managed_image_resource_group_name": "elotl-resources",
-      "managed_image_name": "elotl-kipdev-{{user `version`}}",
-
-      "os_type": "Linux",
-      "image_publisher": "Canonical",
       "image_offer": "UbuntuServer",
+      "image_publisher": "Canonical",
       "image_sku": "16.04-LTS",
       "location": "{{user `azure_region`}}",
-      "vm_size": "Standard_B1s_v2",
+      "managed_image_name": "elotl-kipdev-{{user `version`}}",
+      "managed_image_resource_group_name": "elotl-resources",
+      "os_type": "Linux",
       "shared_image_gallery_destination": {
-        "subscription": "{{user `azure_subscription_id`}}",
-        "resource_group": "elotl-resources",
         "gallery_name": "kipdev",
         "image_name": "elotl-kipdev",
         "image_version": "{{user `version`}}",
-        "replication_regions": ["eastus"]
-      }
+        "replication_regions": [
+          "eastus"
+        ],
+        "resource_group": "elotl-resources",
+        "subscription": "{{user `azure_subscription_id`}}"
+      },
+      "subscription_id": "{{user `azure_subscription_id`}}",
+      "tenant_id": "{{user `azure_tenant_id`}}",
+      "type": "azure-arm",
+      "vm_size": "Standard_B1s_v2"
     }
   ],
   "provisioners": [
     {
-      "type": "shell",
       "inline": [
         "while ! grep \"Cloud-init .* finished\" /var/log/cloud-init.log; do echo \"$(date -Ins) Waiting for cloud-init to finish\"; sleep 2; done"
-      ]
+      ],
+      "type": "shell"
     },
     {
-      "type": "file",
+      "destination": "/tmp/{{user `package`}}",
       "source": "{{user `package`}}",
-      "destination": "/tmp/{{user `package`}}"
+      "type": "file"
     },
     {
-      "type": "file",
+      "destination": "/tmp/aws-fluentd-cell.conf",
       "only": [
-          "amazon-ebs"
+        "amazon-ebs"
       ],
       "source": "aws-fluentd-cell.conf",
-      "destination": "/tmp/aws-fluentd-cell.conf"
+      "type": "file"
     },
     {
-      "type": "file",
+      "destination": "/tmp/google-fluentd-cell.conf",
       "only": [
-          "googlecompute"
+        "googlecompute"
       ],
       "source": "google-fluentd-cell.conf",
-      "destination": "/tmp/google-fluentd-cell.conf"
+      "type": "file"
     },
     {
-      "type": "shell",
-      "only": [
-          "amazon-ebs"
-      ],
-      "environment_vars": [
-          "KIP_PACKAGE={{user `package`}}"
-      ],
-      "script": "aws-provision.sh"
-    },
-    {
-      "type": "shell",
-      "only": [
-          "googlecompute"
-      ],
-      "environment_vars": [
-          "KIP_PACKAGE={{user `package`}}"
-      ],
-      "script": "gce-provision.sh"
-    },
-    {
-      "type": "shell",
-      "only": [
-        "azure-arm"
-      ],
       "environment_vars": [
         "KIP_PACKAGE={{user `package`}}"
       ],
-      "script": "azure-provision.sh"
+      "only": [
+        "amazon-ebs"
+      ],
+      "script": "aws-provision.sh",
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "KIP_PACKAGE={{user `package`}}"
+      ],
+      "only": [
+        "googlecompute"
+      ],
+      "script": "gce-provision.sh",
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "KIP_PACKAGE={{user `package`}}"
+      ],
+      "only": [
+        "azure-arm"
+      ],
+      "script": "azure-provision.sh",
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "azure_client_id": "{{ env `AZURE_CLIENT_ID`}}",
+    "azure_client_secret": "{{ env `AZURE_CLIENT_SECRET`}}",
+    "azure_region": "{{ env `AZURE_REGION`}}",
+    "azure_subscription_id": "{{ env `AZURE_SUBSCRIPTION_ID`}}",
+    "azure_tenant_id": "{{ env `AZURE_TENANT_ID`}}",
+    "gce_account_file": "{{ env `GOOGLE_CLOUD_KEYFILE_JSON`}}",
+    "gce_project_id": "{{env `GCE_PROJECT_ID`}}",
+    "gce_zone": "{{env `GCE_ZONE`}}",
+    "package": "",
+    "version": "{{env `VERSION`}}"
+  }
 }
+
