@@ -41,15 +41,6 @@
       "managed_image_name": "elotl-kipdev-{{user `version`}}",
       "managed_image_resource_group_name": "elotl-resources",
       "os_type": "Linux",
-      "shared_image_gallery_destination": {
-        "gallery_name": "kipdev",
-        "image_name": "elotl-kipdev",
-        "image_version": "{{user `version`}}",
-        "replication_regions": [
-          "eastus", "westus2"
-        ],
-        "resource_group": "elotl-resources"
-      },
       "subscription_id": "{{user `azure_subscription_id`}}",
       "tenant_id": "{{user `azure_tenant_id`}}",
       "type": "azure-arm",
