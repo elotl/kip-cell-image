@@ -20,12 +20,12 @@ sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools
 sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
 
-sudo apt-get install -y podman
+#sudo apt-get install -y podman
 # Remove parameter not supported by systemd on 16.04.
-sudo sed -i '/StartLimitIntervalSec/d' /usr/lib/systemd/system/podman.service
+#sudo sed -i '/StartLimitIntervalSec/d' /usr/lib/systemd/system/podman.service
 sudo systemctl daemon-reload
 
-sudo systemctl enable podman.socket
+#sudo systemctl enable podman.socket
 
 sudo dpkg -i /tmp/$KIP_PACKAGE
 
@@ -39,6 +39,6 @@ sudo rm -rf /root/.ssh
 sudo rm -rf /home/packer/.ssh
 sudo rm -rf /home/ubuntu/.ssh
 
-podman system info
+#podman system info
 
 itzo --version
