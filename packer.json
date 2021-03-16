@@ -9,7 +9,7 @@
       "secret_key": "{{user `aws_secret_key`}}",
       "source_ami_filter": {
         "filters": {
-          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+          "name": "ubuntu/images/*ubuntu-xenial-18.04-amd64-server-*",
           "root-device-type": "ebs",
           "virtualization-type": "hvm"
         },
@@ -26,7 +26,7 @@
       "image_family": "elotl-kipdev",
       "image_name": "elotl-kipdev-{{user `version` | replace_all \".\" \"-\" }}",
       "project_id": "{{user `gce_project_id`}}",
-      "source_image_family": "ubuntu-1604-lts",
+      "source_image_family": "ubuntu-1804-lts",
       "ssh_username": "packer",
       "type": "googlecompute",
       "zone": "{{user `gce_zone`}}"
@@ -36,7 +36,7 @@
       "client_secret": "{{user `azure_client_secret`}}",
       "image_offer": "UbuntuServer",
       "image_publisher": "Canonical",
-      "image_sku": "16.04-LTS",
+      "image_sku": "18.04-LTS",
       "location": "{{user `azure_region`}}",
       "managed_image_name": "elotl-kipdev-{{user `version`}}",
       "managed_image_resource_group_name": "elotl-resources",
