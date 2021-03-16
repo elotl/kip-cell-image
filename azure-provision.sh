@@ -14,11 +14,7 @@ sudo add-apt-repository -y ppa:graphics-drivers/ppa
 sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools snapd
 sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
-sudo snap install podman --edge --devmode
-sudo systemd-path search-binaries
-sudo podman system info
-sudo which podman
-sudo systemctl list-sockets --all
+sudo apt-get install -y podman
 sudo systemctl enable podman.socket
 
 sudo dpkg -i /tmp/$KIP_PACKAGE
