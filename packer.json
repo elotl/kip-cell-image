@@ -44,7 +44,7 @@
       "subscription_id": "{{user `azure_subscription_id`}}",
       "tenant_id": "{{user `azure_tenant_id`}}",
       "type": "azure-arm",
-      "vm_size": "Standard_B1s_v2"
+      "vm_size": "Standard_B1s"
     }
   ],
   "provisioners": [
