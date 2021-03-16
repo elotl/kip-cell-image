@@ -42,6 +42,7 @@
       "managed_image_resource_group_name": "elotl-resources",
       "os_type": "Linux",
       "shared_image_gallery_destination": {
+        "subscription": "{{user `azure_subscription_id`}}",
         "gallery_name": "kipdev",
         "image_name": "elotl-kipdev",
         "image_version": "{{user `version`}}",
