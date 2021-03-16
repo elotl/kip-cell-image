@@ -14,6 +14,12 @@ env:
   GCE_ZONE: us-west1-a
   GCE_PROJECT_ID: elotl-kip
   GOOGLE_CLOUD_KEYFILE_JSON: account.json
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_REGION: eastus
+
 
 name: Build image
 jobs:
