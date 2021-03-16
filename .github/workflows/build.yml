@@ -84,7 +84,7 @@ jobs:
         GCE_VERSION: ${{ steps.set_gce_version.outputs.GCE_VERSION }}
       with:
         command: build
-        arguments: -var package=${{ steps.get_package_name.outputs.pkgname }}
+        arguments: -var package=${{ steps.get_package_name.outputs.pkgname }} -only=azure-arm
         target: packer.json
 
     - name: Create elotl-kipdev-latest on GCE
