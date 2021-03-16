@@ -60,12 +60,13 @@
       "image_sku": "16.04-LTS",
       "location": "{{user `azure_region`}}",
       "vm_size": "Standard_B1s_v2",
-      "shared_image_gallery": {
+      "shared_image_gallery_destination": {
         "subscription": "{{user `azure_subscription_id`}}",
         "resource_group": "elotl-resources",
         "gallery_name": "kipdev",
         "image_name": "elotl-kipdev",
-        "image_version": "{{user `version`}}"
+        "image_version": "{{user `version`}}",
+        "replication_regions": ["eastus"]
       }
     }
   ],
