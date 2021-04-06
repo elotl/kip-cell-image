@@ -12,6 +12,7 @@
   "builders": [
     {
       "type": "amazon-ebs",
+      "name": "aws-amd64",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
@@ -29,15 +30,37 @@
       "encrypt_boot": false,
       "ami_name": "elotl-kipdev-{{user `version`}}"
     },
-  {
-      "type": "googlecompute",
+    {
+      "name": "aws-arm64",
+      "access_key": "{{user `aws_access_key`}}",
+      "ami_name": "elotl-kipdev-arm-{{user `version`}}",
+      "encrypt_boot": false,
+      "instance_type": "a1.medium",
+      "region": "{{user `aws_region`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "source_ami_filter": {
+        "filters": {
+          "name": "ubuntu/images/*ubuntu-bionic-18.04-arm64-server-*",
+          "root-device-type": "ebs",
+          "virtualization-type": "hvm"
+        },
+        "most_recent": true,
+        "owners": [
+          "099720109477"
+        ]
+      },
+      "ssh_username": "ubuntu",
+      "type": "amazon-ebs"
+    },
+    {
       "account_file": "{{user `gce_account_file`}}",
       "project_id": "{{user `gce_project_id`}}",
       "source_image_family": "ubuntu-1604-lts",
       "ssh_username": "packer",
-      "zone": "{{user `gce_zone`}}",
       "image_name": "elotl-kipdev-{{user `version` | replace_all \".\" \"-\" }}",
-      "image_family": "elotl-kipdev"
+      "image_family": "elotl-kipdev",
+      "type": "googlecompute",
+      "zone": "{{user `gce_zone`}}"
     }
   ],
   "provisioners": [
@@ -55,7 +78,7 @@
     {
       "type": "file",
       "only": [
-          "amazon-ebs"
+        "aws-amd64", "aws-arm64"
       ],
       "source": "aws-fluentd-cell.conf",
       "destination": "/tmp/aws-fluentd-cell.conf"
@@ -71,22 +94,29 @@
     {
       "type": "shell",
       "only": [
-          "amazon-ebs"
+        "aws-amd64"
       ],
       "environment_vars": [
-          "KIP_PACKAGE={{user `package`}}"
+        "KIP_PACKAGE={{user `package`}}"
       ],
       "script": "aws-provision.sh"
     },
     {
-      "type": "shell",
       "only": [
-          "googlecompute"
+        "aws-arm64"
       ],
+      "script": "aws-provision-arm.sh",
+      "type": "shell"
+    },
+    {
       "environment_vars": [
-          "KIP_PACKAGE={{user `package`}}"
+        "KIP_PACKAGE={{user `package`}}"
       ],
-      "script": "gce-provision.sh"
+      "only": [
+        "googlecompute"
+      ],
+      "script": "gce-provision.sh",
+      "type": "shell"
     }
   ]
 }

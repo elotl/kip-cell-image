@@ -12,13 +12,14 @@ PKG_DIR=$SCRIPT_DIR/kip-cell
 cd $PKG_DIR
 
 # Download the latest release of itzo-launcher, tosi, itzo and kube-router.
-curl -fsL $(curl -s https://api.github.com/repos/elotl/itzo-launcher/releases/latest | jq -r '.assets[].browser_download_url' | head -n1) > itzo-launcher && chmod 755 itzo-launcher
+# TODO: revert changing to arm, use a env variable to get correct url
+curl -fsL https://itzo-dev-download.s3.amazonaws.com/itzo-launcher-arm > itzo-launcher && chmod 755 itzo-launcher
 
-curl -fsL $(curl -s https://api.github.com/repos/elotl/tosi/releases/latest | jq -r '.assets[].browser_download_url' | head -n1) > tosi && chmod 755 tosi
+curl -fsL https://itzo-dev-download.s3.amazonaws.com/tosi-arm > tosi && chmod 755 tosi
 
-curl -fsL https://itzo-kip-download.s3.amazonaws.com/itzo-latest > itzo && chmod 755 itzo
+curl -fsL https://itzo-dev-download.s3.amazonaws.com/itzo-arm > itzo && chmod 755 itzo
 
-curl -fsL https://itzo-dev-download.s3.amazonaws.com/kube-router > kube-router && chmod 755 kube-router
+curl -fsL https://itzo-dev-download.s3.amazonaws.com/kube-router-arm > kube-router && chmod 755 kube-router
 
 # Build deb package.
 export DEBFULLNAME="Elotl Maintainers"
