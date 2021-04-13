@@ -54,9 +54,9 @@ sudo mv /tmp/aws-fluentd-cell.conf /etc/td-agent/td-agent.conf
 sudo REGION=us-east-1 CLUSTER_NAME=dummy /opt/td-agent/embedded/bin/fluentd --dry-run -c /etc/td-agent/td-agent.conf
 sudo systemctl daemon-reload
 sudo systemctl enable td-agent
-#curl -sfLO https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
-#sudo dpkg -i amazon-cloudwatch-agent.deb && rm amazon-cloudwatch-agent.deb
-#sudo cp /tmp/aws-cloudwatch-agent.conf /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+curl -sfLO https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/arm64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb && rm amazon-cloudwatch-agent.deb
+sudo cp /tmp/aws-cloudwatch-agent.conf /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 
 #sudo systemctl enable podman.socket
 
