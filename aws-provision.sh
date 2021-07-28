@@ -22,8 +22,8 @@ curl -sfL https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add
 curl -sfL https://nvidia.github.io/libnvidia-container/$DIST/libnvidia-container.list | sudo tee /etc/apt/sources.list.d/libnvidia-container.list
 sudo add-apt-repository -y ppa:graphics-drivers/ppa
 
-echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key | sudo apt-key add -
+echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key | sudo apt-key add -
 
 sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools
@@ -34,7 +34,7 @@ sudo apt-get install -y podman
 sudo sed -i '/StartLimitIntervalSec/d' /usr/lib/systemd/system/podman.service
 sudo systemctl daemon-reload
 
-curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh
+curl -sfL https://toolbelt.treasuredata.com/sh/install-ubuntu-focal-td-agent4.sh | sh
 sudo sed -i '/^User=.*$/d' /lib/systemd/system/td-agent.service
 sudo sed -i '/^Group=.*$/d' /lib/systemd/system/td-agent.service
 sudo apt-get install -y g++ make
