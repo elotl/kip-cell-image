@@ -27,7 +27,7 @@ curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/
 
 sudo apt-get update -y
 sudo apt-get install -y iproute2 ipset iptables nfs-common ssl-cert libnvidia-container-tools
-sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-430
+sudo apt-get install -y --no-install-recommends nvidia-cuda-toolkit nvidia-driver-430
 
 sudo apt-get install -y podman
 # Remove parameter not supported by systemd on 16.04.
