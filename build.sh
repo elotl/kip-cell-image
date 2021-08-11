@@ -18,7 +18,7 @@ curl -fsL $(curl -s https://api.github.com/repos/elotl/tosi/releases/latest | jq
 
 curl -fsL https://itzo-kip-download.s3.amazonaws.com/itzo-latest > itzo && chmod 755 itzo
 
-curl -fsL https://itzo-dev-download.s3.amazonaws.com/kube-router > kube-router && chmod 755 kube-router
+curl -fsL https://itzo-dev-download.s3.amazonaws.com/kube-router-v1.3.0-rc2-34-gd173c988-dirty > kube-router && chmod 755 kube-router
 
 # Build deb package.
 export DEBFULLNAME="Elotl Maintainers"

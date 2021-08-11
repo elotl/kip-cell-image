@@ -18,7 +18,7 @@ env:
 name: Build image
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
 
     - name: Checkout code
@@ -42,7 +42,7 @@ jobs:
     - name: Save GCE account.json
       run: echo ${{ secrets.GCP_ACCOUNT_JSON_B64 }} | base64 -d > ${{ env.GOOGLE_CLOUD_KEYFILE_JSON }}
 
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+    - uses: google-github-actions/setup-gcloud@master
       with:
         version: '290.0.1'
         service_account_key: ${{ secrets.GCP_ACCOUNT_JSON }}
